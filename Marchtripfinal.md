@@ -53,3 +53,9 @@
 1. **High-Speed Rail:** Replaced long drives with the *Frecciarossa* (Red Arrow) train between Milan and Rome. It is faster than driving (up to 300km/h) and very scenic.  
 2. **Outlet Shuttle:** Instead of driving to Serravalle, you can use the luxury coach service that leaves from central Milan. This allows you to shop and relax without worrying about parking or luggage.  
 3. **Mountain Shuttles:** Chamonix and Geneva are perfectly connected by airport transfers, and the bus through the Mont Blanc Tunnel is very reliable.
+
+---
+
+Idea for Milan to Rome
+
+![Milan to Rome by bus](https://github.com/mickorix/ai-suggestion/blob/main/Mila2Rome.png?raw=true)
