@@ -1,3 +1,190 @@
+
+# 9. Typical Follow-Up Questions — Model Interview Answers
+
+## Q1. How do you handle **duplicate SWIFT messages**?
+
+**Key idea**: SWIFT is reliable, but duplicates *can* happen → system must be **idempotent**.
+
+**Answer**:
+
+> “I handle duplicates using a combination of **Message ID**, **Correlation ID**, and **business keys** such as transaction reference or settlement date. Each processed message is recorded in a control table. When a message arrives, the system first checks whether it has already been processed. If so, it is safely ignored or logged as a duplicate.”
+
+**Extra points**:
+
+* Use database **unique constraint**
+* MQ **exactly-once delivery + application-level idempotency**
+
+---
+
+## Q2. How do you ensure **message ordering**?
+
+**Answer**:
+
+> “Message ordering is ensured by configuring MQ queues to be consumed by a **single logical consumer** where ordering is critical. If scaling is required, messages are partitioned by a business key, such as account or ISIN, so ordering is preserved within each partition.”
+
+Mention:
+
+* FIFO queues
+* Avoid parallel consumers when strict ordering is required
+* Use **message grouping** if needed
+
+---
+
+## Q3. How do you **replay failed SWIFT messages**?
+
+**Answer**:
+
+> “All SWIFT messages are persisted in an audit table with their processing status. When a message fails, it is moved to a retry or dead-letter queue. After the issue is resolved, operations can replay the message either by re-queuing it from the audit store or triggering a controlled replay function.”
+
+Key words:
+
+* Controlled replay
+* No direct DB manipulation
+* Full audit trail
+
+---
+
+## Q4. How do you **monitor MQ health**?
+
+**Answer**:
+
+> “I monitor queue depth, channel status, and message age using MQ monitoring tools. Alerts are triggered when thresholds are breached, such as abnormal queue growth or stalled consumers. Logs and metrics are integrated into centralized monitoring to support proactive incident management.”
+
+Metrics to mention:
+
+* Queue depth
+* Oldest message age
+* Consumer lag
+* Channel status
+
+---
+
+## Q5. How do you **migrate from MT to MX**?
+
+This is **very high value**.
+
+**Answer**:
+
+> “I would support MT and MX in parallel during the migration phase. A canonical internal message model is used so both MT and MX are mapped into the same internal structure. Extensive validation and reconciliation are performed to ensure consistent business outcomes before decommissioning MT.”
+
+Keywords:
+
+* Parallel run
+* Canonical model
+* Backward compatibility
+* Incremental rollout
+
+---
+
+# 10. Sample Pseudocode (Interview-Friendly)
+
+## A. MQ Producer (Outbound SWIFT Message)
+
+### Java-Style Pseudocode
+
+```java
+MQMessage msg = new MQMessage();
+msg.setPersistence(MQPER_PERSISTENT);
+msg.messageId = generateMessageId();
+msg.correlationId = businessRef;
+
+msg.writeString(swiftMessageContent);
+
+mqQueue.put(msg);
+```
+
+**Explain**:
+
+* Persistent message
+* Business correlation
+* Guaranteed delivery
+
+---
+
+## B. MQ Consumer (Inbound Processing)
+
+```java
+MQMessage msg = mqQueue.get();
+
+if (isDuplicate(msg.correlationId)) {
+    log("Duplicate message ignored");
+    return;
+}
+
+try {
+    SwiftMessage swift = parseSwift(msg);
+    validate(swift);
+    processBusinessLogic(swift);
+    markProcessed(msg.correlationId);
+} catch (Exception e) {
+    moveToRetryOrDLQ(msg);
+}
+```
+
+---
+
+## C. Duplicate Check (Database)
+
+```sql
+SELECT COUNT(1)
+FROM SWIFT_MESSAGE_LOG
+WHERE CORRELATION_ID = :corrId;
+```
+
+---
+
+## D. Retry Logic
+
+```text
+Attempt <= 3 → Retry Queue
+Attempt > 3 → DLQ + Alert Ops
+```
+
+---
+
+# How to Present This in the Interview (Important Tip)
+
+Don’t dump everything.
+
+Use this pattern:
+
+1. **High-level explanation**
+2. **One concrete example**
+3. **Operational control**
+
+Example closing line:
+
+> “This design ensures reliability, traceability, and operational control, which are critical for post-trade SWIFT processing.”
+
+
+---
+
+## ✅ A SAFE, SHORT ANSWER You Can Use in the Interview
+
+If the interviewer asks **anything about SWIFT + MQ design**, you can say this **confidently**, even if you’re nervous:
+
+> “I would design the SWIFT messaging system using a message-driven architecture with IBM MQ.
+> All inbound and outbound MT/MX messages are persisted in MQ with persistent delivery.
+> The consumer validates, parses, and processes messages asynchronously, with retry and DLQ handling to ensure no message is lost.
+> Duplicate checking, auditing, and replay capability are built in to support post-trade operational requirements.”
+
+That alone already sounds **senior**.
+
+---
+
+## 🧠 If You Freeze — Use This 3-Step Structure
+
+When your mind goes blank, follow this order:
+
+1️⃣ **Reliability** – “MQ guarantees delivery”
+2️⃣ **Control** – “Retry, DLQ, replay”
+3️⃣ **Audit** – “Every message traceable”
+
+Interviewers care more about **risk control** than fancy code.
+
+
+---
+
 Perfect — behavioral questions can make or break your interview, especially at CMU, where **they want someone reliable, calm under pressure, and collaborative**.
 
 I’ll give you a **step-by-step approach**, examples tailored to **post-trade / IT & system development**, and a **ready-to-use structure** you can memorize.
