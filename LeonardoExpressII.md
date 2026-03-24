@@ -7,7 +7,7 @@ Since bank dispute forms often have character limits, I have drafted three versi
 
 ### Option 2: Detailed (Best for formal email or web dispute)
 > **Transaction Dispute Description:**
-> I am disputing a charge from [Merchant Name] on [Date]. I accessed the platform via the contactless 'Tap & Go' gate at Platform 24 (Leonardo Express). The gate opened only after my Apple Pay was successfully read. During the journey, an inspector claimed their handheld device could not see the transaction. 
+> I am disputing a charge from [Merchant Name] on [Date]. I accessed the platform 24 (Leonardo Express) via the contactless 'Tap & Go' gate. The gate opened only after my Apple Pay was successfully read. During the journey, an inspector claimed their handheld device could not see the transaction. 
 >
 > The inspector insisted I provide my card details for a 'pre-authorization' to investigate the gate logs and surveillance later. He explicitly compared this to a 'hotel hold.' Trusting this professional representation, I complied. My bank has since confirmed that this was not a hold, but a final charge. As the initial gate entry proves a successful payment/validation occurred, this second charge is an error caused by a technical synchronization failure between the gate and the inspector's device.
 
